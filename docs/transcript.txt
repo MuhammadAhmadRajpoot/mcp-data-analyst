@@ -1,0 +1,16 @@
+Q: Show monthly revenue from delivered orders as a line chart saved as monthly_revenue.png, and tell me which month was highest.
+(model: openai/gpt-oss-120b)
+
+-> list_datasets({})
+<- {"datasets": [{"name": "customers", "source": "customers.csv", "format": "csv", "sub_table": null, "row_count": 400, "columns": [{"name": "customer_id", "type": "BIGINT"}, {"name": "name", "type": "VARCHAR"}, {"name": "email", "type": "VARCHAR"}, {"name": "country", "type": "VARCHAR"}, {"name": "seg...
+-> query({"sql": "SELECT DATE_TRUNC('month', o.order_date) AS month,\n       SUM(oi.quantity * oi.unit_price * (1 - oi.discount)) AS revenue\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nWHERE o.status = 'delivered'\nGROUP BY month\nORDER BY month"})
+<- {"columns": ["month", "revenue"], "column_types": ["TIMESTAMP", "DOUBLE"], "rows": [["2024-03-01T00:00:00", 53730.07449999999], ["2024-04-01T00:00:00", 65872.80449999997], ["2024-05-01T00:00:00", 51365.68999999998], ["2024-06-01T00:00:00", 48259.1235], ["2024-07-01T00:00:00", 62703.76299999994], ["2...
+-> create_chart({"chart_type": "line", "filename": "monthly_revenue.png", "sql": "SELECT DATE_TRUNC('month', o.order_date) AS month,\n       SUM(oi.quantity * oi.unit_price * (1 - oi.discount)) AS revenue\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nWHERE o.status = 'delivered'\nGROUP BY month\nORDER BY month", "title": "Monthly Revenue from Delivered Orders", "x": "month", "y": "revenue"})
+<- {"saved_to": "output\\monthly_revenue.png", "rows_plotted": 21, "truncated": false}
+[image content omitted]
+
+A: **Monthly revenue from delivered orders**
+
+- The line chart has been saved as **`monthly_revenue.png`**.
+
+- The highest revenue month is **November 2025**, with a revenue of **$120,155.06**.
