@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-data-analyst"
+version = "0.1.0"
+description = "A read-only, sandboxed MCP server for analysing local CSV, Excel, Parquet and SQLite files with DuckDB SQL, profiling and charts."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Muhammad Ahmad" }]
+requires-python = ">=3.12"
+keywords = ["mcp", "model-context-protocol", "duckdb", "data-analysis", "llm", "agents"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "mcp==2.3.0",
+    "duckdb==1.5.6",
+    "sqlglot==30.23.0",
+    "pandas==3.0.6",
+    "numpy==2.5.4",
+    "pyarrow==26.0.0",
+    "openpyxl==3.1.5",
+    "matplotlib==3.11.2",
+    "pydantic==2.14.1",
+    "pydantic-settings==2.16.0",
+    "anyio==4.15.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.17.1",
+]
+examples = [
+    "openai==3.31.0",
+    "python-dotenv==1.2.4",
+]
+
+[project.scripts]
+mcp-data-analyst = "mcp_data_analyst.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/MuhammadAhmadRajpoot/mcp-data-analyst"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_data_analyst"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S", "C4", "PTH"]
+ignore = ["S101", "S608"]  # asserts in tests; S608: SQL is built only from validated identifiers
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "PTH"]
+"scripts/**" = ["S311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs network access and GROQ_API_KEY (deselect with -m 'not integration')"]
+addopts = "-m 'not integration'"
